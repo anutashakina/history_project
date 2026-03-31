@@ -68,7 +68,7 @@ export function Footer() {
                 info@hidden-city.example
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/anutashakina/history_project"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-[#C19A6B] transition-colors"
