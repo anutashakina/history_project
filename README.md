@@ -27,8 +27,6 @@ npm run dev
 npm run build
 ```
 
-После пуша в `main` сайт публикуется на GitHub Pages через GitHub Actions.
-
 ## Структура
 
 - `src/app/components` — секции сайта и интерфейсные компоненты
