@@ -1,106 +1,120 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { MapPin, Calendar, Info } from "lucide-react";
-import type { Monument } from "../data/monuments";
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+
+interface Monument {
+    id: number;
+    name: string;
+    period: string;
+    description: string;
+    protection: string;
+    images: {
+        modern: string;
+        archive: string[];
+    };
+    sources: string[];
+}
 
 interface ObjectCardProps {
-  monument: Monument;
-  isActive: boolean;
+    monument: Monument;
+    isActive: boolean;
 }
 
 export function ObjectCard({ monument, isActive }: ObjectCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{
-        opacity: isActive ? 1 : 0.4,
-        y: isActive ? 0 : 20,
-        scale: isActive ? 1 : 0.95,
-      }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-[#F5F1E8]/95 backdrop-blur-sm rounded-lg shadow-2xl overflow-hidden border border-[#C4B5A0]/30"
-    >
-      <div className="p-6 lg:p-8">
-        {/* Заголовок */}
-        <div className="flex items-start gap-3 mb-4">
-          <MapPin className="w-5 h-5 text-[#C19A6B] flex-shrink-0 mt-1" />
-          <div>
-            <h3 className="text-xl lg:text-2xl text-[#3C3226] mb-2">
-              {monument.name}
-            </h3>
-            <div className="flex items-center gap-2 text-xs lg:text-sm text-[#6B5D54]">
-              <Calendar className="w-4 h-4" />
-              <span>{monument.period}</span>
+    const archiveImg = monument?.images?.archive?.[0] || "";
+    const modernImg = monument?.images?.modern || "";
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{
+                opacity: isActive ? 1 : 0.4,
+                y: isActive ? 0 : 20,
+                scale: isActive ? 1 : 0.95,
+            }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="bg-[#F5F1E8] rounded-[48px] shadow-2xl overflow-hidden border border-[#C4B5A0]/30 p-10 lg:p-12 w-full max-w-2xl"
+        >
+            {/* 1. Заголовок */}
+            <div className="flex items-center gap-3 mb-2">
+                <MapPin className="w-7 h-7 text-[#C19A6B]" />
+                <h3 className="text-3xl lg:text-4xl text-[#3C3226] font-serif tracking-tight">
+                    {monument?.name}
+                </h3>
             </div>
-          </div>
-        </div>
 
-        {/* Описание */}
-        <div className="mb-6">
-          <p className="text-sm lg:text-base text-[#4A4238] leading-relaxed">
-            {monument.description}
-          </p>
-        </div>
-
-        {/* Блок "Тогда / Сейчас" - заглушка */}
-        <div className="mb-6">
-          <h4 className="text-sm uppercase tracking-wider text-[#8B7D6B] mb-3">
-            Тогда / Сейчас
-          </h4>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#E5DFD0] rounded-md h-40 flex items-center justify-center text-[#8B7D6B] text-sm">
-              Архивное фото
+            {/* 2. Период */}
+            <div className="flex items-center gap-2 text-[#6B5D54] mb-8 ml-1">
+                <Calendar className="w-5 h-5 text-[#8B7D6B]/70" />
+                <span className="text-lg">{monument?.period}</span>
             </div>
-            <div className="bg-[#E5DFD0] rounded-md h-40 flex items-center justify-center text-[#8B7D6B] text-sm">
-              Современное фото
+
+            {/* 3. Описание */}
+            <div className="mb-10 text-[#4A4238] text-lg leading-relaxed font-light">
+                {monument?.description}
             </div>
-          </div>
-        </div>
 
-        {/* Защитные конструкции */}
-        <div className="mb-6 p-5 bg-[#E8E3D6] rounded-md">
-          <h4 className="text-sm uppercase tracking-wider text-[#6B5D54] mb-2 flex items-center gap-2">
-            <Info className="w-4 h-4" />
-            Защитные конструкции
-          </h4>
-          <p className="text-sm text-[#4A4238] leading-relaxed">
-            {monument.protection}
-          </p>
-        </div>
+            {/* 4. ТОГДА / СЕЙЧАС */}
+            <div className="mb-10">
+                <h4 className="text-[13px] uppercase tracking-[0.2em] text-[#8B7D6B] mb-5 font-semibold">
+                    ТОГДА / СЕЙЧАС
+                </h4>
+                <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-[#E5DFD0] border border-[#C4B5A0]/20 shadow-sm">
+                    <ReactCompareSlider
+                        itemOne={<ReactCompareSliderImage src={archiveImg} alt="Архив" />}
+                        itemTwo={<ReactCompareSliderImage src={modernImg} alt="Современность" />}
+                        style={{ width: '100%', height: '100%' }}
+                    />
+                </div>
+            </div>
 
-        {/* Галерея чертежей - заглушка */}
-        <div className="mb-6">
-          <h4 className="text-sm uppercase tracking-wider text-[#8B7D6B] mb-3">
-            Архивные документы
-          </h4>
-          <div className="grid grid-cols-3 gap-2">
-            {monument.images.archive.map((img, idx) => (
-              <div
-                key={idx}
-                className="bg-[#E5DFD0] rounded h-24 flex items-center justify-center text-xs text-[#8B7D6B]"
-              >
-                Чертёж {idx + 1}
-              </div>
-            ))}
-          </div>
-        </div>
+            {/* 5. ЗАЩИТНЫЕ КОНСТРУКЦИИ */}
+            <div className="bg-[#E8E3D6]/70 p-8 rounded-3xl mb-10">
+                <div className="flex items-center gap-3 text-[#8B7D6B] mb-4">
+                    <Info className="w-6 h-6" />
+                    <h4 className="text-[13px] uppercase tracking-[0.2em] font-bold text-[#8B7D6B]">
+                        ЗАЩИТНЫЕ КОНСТРУКЦИИ
+                    </h4>
+                </div>
+                <p className="text-[#4A4238] text-lg leading-relaxed">
+                    {monument?.protection}
+                </p>
+            </div>
 
-        {/* Источники */}
-        <div className="pt-4 border-t border-[#C4B5A0]/40">
-          <h4 className="text-xs uppercase tracking-wider text-[#8B7D6B] mb-2">
-            Источники
-          </h4>
-          <ul className="text-xs text-[#6B5D54] space-y-1">
-            {monument.sources.map((source, idx) => (
-              <li key={idx}>• {source}</li>
-            ))}
-          </ul>
-        </div>
+            {/* 6. АРХИВНЫЕ ДОКУМЕНТЫ */}
+            <div className="mb-10">
+                <h4 className="text-[13px] uppercase tracking-[0.2em] text-[#8B7D6B] mb-5 font-semibold">
+                    АРХИВНЫЕ ДОКУМЕНТЫ
+                </h4>
+                <div className="grid grid-cols-2 gap-5">
+                    <div className="bg-[#E5DFD0] rounded-2xl h-44 flex items-center justify-center text-[#8B7D6B] text-base border border-[#C4B5A0]/20">Чертёж 1</div>
+                    <div className="bg-[#E5DFD0] rounded-2xl h-44 flex items-center justify-center text-[#8B7D6B] text-base border border-[#C4B5A0]/20">Чертёж 2</div>
+                </div>
+            </div>
 
-        {/* Кнопка "Подробнее" */}
-        <button className="mt-6 w-full py-3 px-6 bg-[#8B7355] hover:bg-[#6B5D54] text-[#F5F1E8] rounded transition-colors duration-300 text-sm uppercase tracking-wider">
-          Подробнее
-        </button>
-      </div>
-    </motion.div>
-  );
+            {/* 7. ИСТОЧНИКИ*/}
+            <div className="pt-8 mt-10 border-t border-[#C4B5A0]/60">
+                <h4 className="text-[13px] uppercase tracking-[0.2em] text-[#8B7D6B] mb-5 font-semibold">
+                    ИСТОЧНИКИ
+                </h4>
+                <ul className="text-[#4A4238] text-base lg:text-lg space-y-1">
+                    {monument?.sources && monument.sources.length > 0 ? (
+                        monument.sources.map((source, idx) => (
+                            <li key={idx}>• {source}</li>
+                        ))
+                    ) : (
+                        <>
+                            <li>• Военный архив</li>
+                            <li>• Фотодокументы ГМИП</li>
+                        </>
+                    )}
+                </ul>
+            </div>
+
+            {/* 8. КНОПКА ПОДРОБНЕЕ */}
+            <button className="mt-10 w-full py-5 bg-[#8B7355] hover:bg-[#766248] text-white rounded-xl transition-all duration-300 text-base uppercase tracking-[0.3em] font-bold shadow-md active:scale-[0.98]">
+                ПОДРОБНЕЕ
+            </button>
+        </motion.div>
+    );
 }
