@@ -1,3 +1,5 @@
+
+
 import * as React from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import * as L from 'leaflet';
@@ -6,13 +8,13 @@ import { MapPin } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 const SPB_BOUNDS: L.LatLngBoundsExpression = [[58.5, 27.5], [61.5, 34.0]];
-const CENTER_SPB: [number, number] = [59.9386, 30.3141];
+const CENTER_SPB: [number, number] =[59.9386, 30.3141];
 
 function MapFlyController({ center }: { center: [number, number] }) {
     const map = useMap();
     React.useEffect(() => {
-        if (center) map.flyTo(center, 15, { duration: 1.5 });
-    }, [center, map]);
+        if (center) map.flyTo(center, 18, { duration: 1.5 });
+    },[center, map]);
     return null;
 }
 
@@ -23,12 +25,12 @@ const createCustomIcon = (isActive: boolean) => {
             {isActive && <div className="absolute inset-0 w-10 h-10 bg-[#C19A6B] rounded-full animate-ping opacity-20" />}
         </div>
     );
-    return L.divIcon({ html: iconMarkup, className: 'custom-marker-icon', iconSize: [40, 40], iconAnchor: [20, 40] });
+    return L.divIcon({ html: iconMarkup, className: 'custom-marker-icon', iconSize:[40, 40], iconAnchor: [20, 40] });
 };
 
 export const InteractiveMap: React.FC<{ markers: any[]; onMarkerClick?: (id: number) => void }> = ({ markers, onMarkerClick }) => {
     const activeMarker = markers.find((m: any) => m.isActive);
-    const currentCenter: [number, number] = activeMarker ? [activeMarker.lat, activeMarker.lng] : CENTER_SPB;
+    const currentCenter: [number, number] = activeMarker ?[activeMarker.lat, activeMarker.lng] : CENTER_SPB;
 
     return (
         <div className="relative w-full h-full bg-[#E8E3D6] rounded-2xl overflow-hidden border-4 border-[#6B5D54]/30 shadow-2xl">
@@ -36,9 +38,22 @@ export const InteractiveMap: React.FC<{ markers: any[]; onMarkerClick?: (id: num
             <div className="absolute inset-0 pointer-events-none z-[999] bg-[#C19A6B]/20 mix-blend-color" />
             <div className="absolute inset-0 pointer-events-none z-[999] shadow-[inset_0_0_100px_rgba(107,93,84,0.5)]" />
 
-            <MapContainer center={CENTER_SPB} zoom={11} minZoom={9} maxZoom={15} maxBounds={SPB_BOUNDS} zoomControl={false} attributionControl={false} style={{ height: '100%', width: '100%', background: '#E8E3D6' }}>
+            <MapContainer
+                center={CENTER_SPB}
+                zoom={11}
+                minZoom={10}
+                maxZoom={18}
+                maxBounds={SPB_BOUNDS}
+                zoomControl={false}
+                attributionControl={false}
+                style={{ height: '100%', width: '100%', background: '#E8E3D6' }}
+            >
                 <MapFlyController center={currentCenter} />
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                <TileLayer
+                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                    maxZoom={18}
+                />
+
                 {markers.map((marker) => (
                     <Marker key={marker.id} position={[marker.lat, marker.lng]} icon={createCustomIcon(marker.isActive)} eventHandlers={{ click: () => onMarkerClick?.(marker.id) }} />
                 ))}
